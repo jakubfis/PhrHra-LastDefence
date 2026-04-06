@@ -1,6 +1,6 @@
 # Last Defence (v1.4)
 
-## Tutorial
+## Trailer
 https://youtu.be/rP6xYuiOQGE
 
 ## Web k hraní

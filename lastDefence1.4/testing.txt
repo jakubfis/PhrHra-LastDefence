@@ -1,6 +1,0 @@
-soundFist.volume = 0.5;
-soundKnife.volume = 0.2;
-soundSword.volume = 0.;
-soundHit.volume = 0.2; 
-soundShot.volume = 0.15;
-soundDeath.volume = 0.2;

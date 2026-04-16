@@ -26,20 +26,26 @@ let waveCooldownTimer = 0;
 const waveDelay = 300; 
 
 // --- AUDIO ---
-// Útoky nepřátel (když ti ubírají životy)
-const soundFist = new Audio('assets/fistHit.mp3');   // Tank
-const soundKnife = new Audio('assets/knifeHit.mp3'); // Runner
-const soundSword = new Audio('assets/swordHit.mp3'); // Basic
+// Hudba na pozadí
+const bgMusic = new Audio('assets/music.mp3');
+bgMusic.loop = true;
+bgMusic.volume = 0.3;
+let isMusicPlaying = false;
+
+// Útoky nepřátel
+const soundFist = new Audio('assets/fistHit.mp3');   
+const soundKnife = new Audio('assets/knifeHit.mp3'); 
+const soundSword = new Audio('assets/swordHit.mp3'); 
 
 // Střelba tvých postav
-const soundSoldierShot = new Audio('assets/gunHit.mp3');   // Voják
-const soundTurretShot = new Audio('assets/turretHit.mp3'); // Věž
+const soundSoldierShot = new Audio('assets/gunHit.mp3');   
+const soundTurretShot = new Audio('assets/turretHit.mp3'); 
 
 // Ostatní efekty
-const soundHit = new Audio('assets/hitSound.mp3');   // Když trefíš enemy projektilem
-const soundDeath = new Audio('assets/death.mp3');   // Když enemy umře
+const soundHit = new Audio('assets/hitSound.mp3');   
+const soundDeath = new Audio('assets/death.mp3');   
 
-// Hlasitosti
+// Hlasitosti efektů
 soundFist.volume = 0.4;
 soundKnife.volume = 0.2;
 soundSword.volume = 0.1;
@@ -68,6 +74,21 @@ const imgEnemyTank1 = new Image(); imgEnemyTank1.src = 'assets/enemyTank1.png';
 const imgEnemyTank2 = new Image(); imgEnemyTank2.src = 'assets/enemyTank2.png';
 
 // --- OVLÁDÁNÍ A UI ---
+
+// Logika pro hudbu
+const musicBtn = document.getElementById('music-btn');
+musicBtn.addEventListener('click', () => {
+    if (isMusicPlaying) {
+        bgMusic.pause();
+        musicBtn.innerHTML = '🔇';
+    } else {
+        bgMusic.play().catch(e => console.log("Hudba nenalezena v assets/music.mp3"));
+        musicBtn.innerHTML = '🔊';
+    }
+    isMusicPlaying = !isMusicPlaying;
+});
+
+// Logika pro pauzu
 document.getElementById('pause-btn').addEventListener('click', togglePause);
 function togglePause() {
     isPaused = !isPaused;
@@ -229,7 +250,6 @@ class Defender {
                 projectiles.push(p);
                 this.activeProjectile = p;
                 
-                // Zvuk střelby podle typu postavy
                 if (this.type === 1) playSnd(soundSoldierShot);
                 else if (this.type === 2) playSnd(soundTurretShot);
 
@@ -361,7 +381,6 @@ function handleEnemies(){
                     defenders[j].health -= enemies[i].attackDamage;
                     enemies[i].attackTimer = enemies[i].attackCooldown;
                     
-                    // Zvuky útoku nepřátel
                     if (enemies[i].enemyType === "tank") playSnd(soundFist);
                     else if (enemies[i].enemyType === "runner") playSnd(soundKnife);
                     else playSnd(soundSword);
@@ -381,7 +400,6 @@ function handleEnemies(){
         }
     }
     
-    // Logika vln
     if (inWaveCooldown) {
         waveCooldownTimer--;
         ctx.fillStyle = '#00ffcc'; ctx.font = 'bold 30px Courier New'; ctx.textAlign = 'center';
@@ -413,13 +431,13 @@ function handleProjectiles(){
         for (let j = 0; j < enemies.length; j++){
             if (enemies[j] && projectiles[i] && enemies[j].y === projectiles[i].rowY && collision(projectiles[i], enemies[j])){
                 enemies[j].health -= projectiles[i].power;
-                playSnd(soundHit); // Zvuk zásahu
+                playSnd(soundHit); 
                 projectiles.splice(i, 1); i--;
                 
                 if (enemies[j] && enemies[j].health <= 0) { 
                     score += 10;
                     money += enemies[j].rewardMoney;
-                    playSnd(soundDeath); // Zvuk smrti
+                    playSnd(soundDeath); 
                     enemies.splice(j, 1); j--; 
                 }
                 break;
@@ -475,6 +493,9 @@ function animate(){
     requestAnimationFrame(animate);
 }
 
-window.addEventListener('resize', () => { canvasPosition = canvas.getBoundingClientRect(); });
+window.addEventListener('resize', () => { 
+    canvasPosition = canvas.getBoundingClientRect(); 
+});
+
 updateUICosts();
 animate();
